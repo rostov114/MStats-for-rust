@@ -159,7 +159,7 @@ namespace Oxide.Plugins
                 "';");
                 if (LogAdminCall())
                 {
-                    executeQuery("CREATE TABLE IF NOT EXISTS admin_log	(id INT(11) NOT NULL AUTO_INCREMENT, player_id BIGINT(20) NULL, player_name VARCHAR(255) NULL, player_ip VARCHAR(128) NULL, text VARCHAR(255) NULL, time TIMESTAMP NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET='" +
+                    executeQuery("CREATE TABLE IF NOT EXISTS admin_log  (id INT(11) NOT NULL AUTO_INCREMENT, player_id BIGINT(20) NULL, player_name VARCHAR(255) NULL, player_ip VARCHAR(128) NULL, text VARCHAR(255) NULL, time TIMESTAMP NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET='" +
                     Config["Charset"].ToString() +
                     "';");
                 }
@@ -183,7 +183,7 @@ namespace Oxide.Plugins
                 }
                 if (LogAirdrop())
                 {
-                    executeQuery("CREATE TABLE IF NOT EXISTS server_log_airdrop	(id INT(11) NOT NULL AUTO_INCREMENT, plane VARCHAR(128) NULL, location VARCHAR(128) NULL, time TIMESTAMP NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET='" +
+                    executeQuery("CREATE TABLE IF NOT EXISTS server_log_airdrop (id INT(11) NOT NULL AUTO_INCREMENT, plane VARCHAR(128) NULL, location VARCHAR(128) NULL, time TIMESTAMP NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET='" +
                     Config["Charset"].ToString() +
                     "';");
                 }
@@ -926,6 +926,10 @@ namespace Oxide.Plugins
         [ConsoleCommand("mstats.reload")]
         private void ReloadCommand(ConsoleSystem.Arg arg)
         {
+            BasePlayer player = arg?.Player() ?? null; 
+            if (player != null && !player.IsAdmin) 
+                return;
+
             try
             {
                 PrintWarning("Reloading plugin!");
@@ -941,6 +945,10 @@ namespace Oxide.Plugins
         [ConsoleCommand("mstats.drop")]
         private void DropTableCommand(ConsoleSystem.Arg arg)
         {
+            BasePlayer player = arg?.Player() ?? null; 
+            if (player != null && !player.IsAdmin) 
+                return;
+
             executeQuery("DROP TABLE player_stats");
             executeQuery("DROP TABLE player_resource_gather");
             executeQuery("DROP TABLE player_crafted_item");
@@ -1050,6 +1058,10 @@ namespace Oxide.Plugins
         [ConsoleCommand("mstats.empty")]
         private void EmptyTableCommand(ConsoleSystem.Arg arg)
         {
+            BasePlayer player = arg?.Player() ?? null; 
+            if (player != null && !player.IsAdmin) 
+                return;
+
             TruncateData();
             PrintWarning("Empty tables successful!\nPlease reload the plugin to create new tabels");
         }
